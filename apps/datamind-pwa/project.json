@@ -1,0 +1,50 @@
+{
+  "name": "datamind-pwa",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/datamind-pwa/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "serve": {
+      "executor": "@nx/vite:dev-server",
+      "options": {
+        "buildTarget": "datamind-pwa:build",
+        "port": 5173,
+        "host": true
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "datamind-pwa:build:production",
+          "hmr": false
+        }
+      }
+    },
+    "build": {
+      "executor": "@nx/vite:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/datamind-pwa"
+      },
+      "configurations": {
+        "production": {
+          "mode": "production"
+        }
+      }
+    },
+    "preview": {
+      "executor": "@nx/vite:preview-server",
+      "options": {
+        "buildTarget": "datamind-pwa:build",
+        "port": 4173,
+        "host": true
+      }
+    },
+    "check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "svelte-check --tsconfig ./tsconfig.json",
+        "cwd": "apps/datamind-pwa"
+      }
+    }
+  }
+}

@@ -20,21 +20,38 @@ Proč si jen propojovat poznámky, když se na ně můžete dotazovat? DataMind 
 
 Projekt je v rané (pre-alpha) fázi. Právě nastavujeme základní architekturu a vývojové prostředí.
 
-## 🚀 Začínáme (Vývoj)
+## � Struktura projektu
+
+DataMind Core je **Nx monorepo** s následující strukturou:
+
+```
+datamind-core/
+├── apps/
+│   ├── datamind-pwa/      # Progressive Web App (SvelteKit + Vite)
+│   └── datamind-mobile/   # Mobilní aplikace (Capacitor)
+├── packages/              # Sdílené knihovny
+└── .devcontainer/         # GitHub Codespaces konfigurace
+```
+
+**📖 Podrobná dokumentace:** [MONOREPO.md](./MONOREPO.md)
+
+## �🚀 Začínáme (Vývoj)
 
 Tento projekt je navržen pro vývoj primárně v **GitHub Codespaces**.
 
 Nemusíte si na svůj počítač nic instalovat. Náš Codespace je předkonfigurován se vším, co potřebujete:
-* Node.js (LTS)
-* TypeScript
-* Svelte & NestJS
+* **Node.js 22 LTS**
+* **pnpm 10** - Efektivní package manager
+* **Nx** - Monorepo management
+* TypeScript & Svelte
 * **GitHub CLI (`gh`)**
 * **GitHub Copilot CLI (`copilot`)**
 
 1.  Klikněte na tlačítko "Open in GitHub Codespaces" výše.
 2.  Počkejte, než se sestaví kontejner (pár minut).
 3.  Otevře se vám plně nakonfigurované prostředí VS Code.
-4.  Můžete začít kódovat!
+4.  Dependencies se nainstalují automaticky!
+5.  Můžete začít kódovat!
 
 ### Lokální vývoj
 
@@ -54,33 +71,68 @@ code .
 Po otevření v kontejneru:
 
 ```bash
-# Spustit vývojový server
-npm run dev
+# Instalace dependencies
+pnpm install
+
+# Spustit PWA dev server
+pnpm exec nx serve datamind-pwa
 
 # Zkontrolovat dostupné nástroje
 gh --version
 copilot --help
 node --version
+
+# Zobrazit všechny projekty
+pnpm exec nx show projects
 ```
 
 ### Dostupné příkazy
 
 ```bash
-npm run dev       # Spustí Vite dev server (port 5173)
-npm run build     # Vytvoří produkční build
-npm run preview   # Náhled produkčního buildu
-npm run check     # TypeScript a Svelte kontrola
-npm run format    # Formátování kódu pomocí Prettier
+# PWA aplikace
+pnpm exec nx serve datamind-pwa    # Dev server (port 5173)
+pnpm exec nx build datamind-pwa    # Production build
+pnpm exec nx preview datamind-pwa  # Preview buildu (port 4173)
+pnpm exec nx check datamind-pwa    # TypeScript type checking
+
+# Build všech projektů
+pnpm exec nx run-many -t build --all
+
+# Formátování
+pnpm run format
 ```
 
 ## 🛠️ Technologický stack
 
-* **Frontend:** SvelteKit + TypeScript
-* **Mobilní verze:** Capacitor
+### Monorepo Management
+* **Nx 22** - Build system a monorepo tools
+* **pnpm 10** - Rychlý, efektivní package manager
+
+## 🛠️ Technologický stack
+
+### Monorepo Management
+* **Nx 22** - Build system a monorepo tools
+* **pnpm 10** - Rychlý, efektivní package manager
+
+### Frontend (PWA)
+* **SvelteKit 4** + TypeScript
+* **Vite 5** - Lightning fast build tool
+* **Capacitor 6** - Mobilní wrapper
+
+### Backend (Plánováno)
 * **Backend (Community):** NestJS
+
+### DevOps & Tools
 * **Vývojové AI:** GitHub Copilot CLI
 * **CI/CD:** GitHub Actions
 * **Cloud (pro Pro verzi):** Google Cloud Platform (GCP) & Firebase
+
+## 📚 Dokumentace
+
+- **[MONOREPO.md](./MONOREPO.md)** - Kompletní průvodce Nx monorepo
+- **[.devcontainer/README.md](./.devcontainer/README.md)** - Codespaces setup
+- **[GitHub Issues](https://github.com/digilifehub/datamind-core/issues)** - Úkoly a bugy
+- **[GitHub Discussions](https://github.com/digilifehub/datamind-core/discussions)** - Diskuze
 
 ## 🙌 Přispívání
 
