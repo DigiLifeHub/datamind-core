@@ -1,0 +1,25 @@
+{
+  "name": "datamind-mobile",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/datamind-mobile",
+  "projectType": "application",
+  "tags": ["mobile"],
+  "targets": {
+    "sync": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cap sync",
+        "cwd": "apps/datamind-mobile"
+      },
+      "dependsOn": ["datamind-pwa:build"]
+    },
+    "cap": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cap",
+        "cwd": "apps/datamind-mobile"
+      }
+    }
+  },
+  "implicitDependencies": ["datamind-pwa"]
+}
