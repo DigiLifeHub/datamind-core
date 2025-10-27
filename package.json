@@ -2,6 +2,22 @@
   "name": "datamind-core",
   "version": "0.1.0",
   "private": true,
+  "description": "DataMind Core - Open-source, local-first knowledge management platform",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DigiLifeHub/datamind-core.git"
+  },
+  "keywords": [
+    "nx",
+    "monorepo",
+    "svelte",
+    "capacitor",
+    "pwa",
+    "knowledge-management",
+    "local-first"
+  ],
+  "author": "DigiLifeHub",
+  "license": "Apache-2.0",
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint ."
