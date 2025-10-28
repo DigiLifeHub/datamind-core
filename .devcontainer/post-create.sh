@@ -3,6 +3,17 @@ set -e
 
 echo "🚀 Starting post-create setup..."
 
+# Install Git LFS if not present
+echo "📦 Checking Git LFS..."
+if ! command -v git-lfs &> /dev/null; then
+    echo "Installing Git LFS..."
+    sudo apt-get update -qq && sudo apt-get install -y git-lfs
+    git lfs install
+    echo "✓ Git LFS installed"
+else
+    echo "✓ Git LFS already installed"
+fi
+
 # Verify GitHub CLI is installed
 echo "✓ Checking GitHub CLI..."
 if command -v gh &> /dev/null; then
@@ -12,24 +23,18 @@ else
     exit 1
 fi
 
-# Install GitHub Copilot CLI extension
+# Install GitHub Copilot CLI (npm package)
 echo "📦 Installing GitHub Copilot CLI..."
-if gh extension list | grep -q "github/gh-copilot"; then
+if command -v copilot &> /dev/null; then
     echo "✓ GitHub Copilot CLI already installed"
-    gh extension upgrade gh-copilot || true
+    npm update -g @github/copilot || true
 else
-    gh extension install github/gh-copilot
-fi
-
-# Create copilot alias
-echo "🔗 Creating copilot alias..."
-if ! grep -q "alias copilot=" ~/.bashrc; then
-    echo 'alias copilot="gh copilot"' >> ~/.bashrc
+    npm install -g @github/copilot
 fi
 
 # Verify copilot command
 echo "✓ Verifying Copilot CLI..."
-gh copilot --version || echo "⚠️  Copilot CLI installed, but may require authentication"
+copilot --version || echo "⚠️  Copilot CLI installed, but may require authentication"
 
 # Install npm dependencies if package.json exists
 if [ -f "package.json" ]; then
