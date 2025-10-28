@@ -51,10 +51,10 @@ datamind-core/
 **📍 Lokace:** `.devcontainer/post-create.sh`
 
 Script automaticky:
+- ✅ Nainstaluje Git LFS pro správu velkých souborů
 - ✅ Ověří přítomnost GitHub CLI (`gh`)
-- ✅ Nainstaluje GitHub Copilot CLI extension (`gh copilot`)
-- ✅ Vytvoří alias `copilot` pro snadnější použití
-- ✅ Spustí `npm install` pokud existuje `package.json`
+- ✅ Nainstaluje GitHub Copilot CLI jako npm balíček (`@github/copilot`)
+- ✅ Spustí `pnpm install` pokud existuje workspace konfigurace
 - ✅ Má nastavená správná oprávnění (`chmod +x`)
 
 ### 4. Node.js & Package Management
@@ -75,13 +75,17 @@ npm: 9.8.1
 **GitHub CLI:**
 ```bash
 $ gh --version
-gh version 2.75.0 (2025-07-09)
+gh version 2.82.1 (2025-10-22)
 ```
 
 **Copilot CLI:**
-- ✅ Připraven k instalaci přes `gh extension install github/gh-copilot`
-- ✅ Alias `copilot` bude dostupný po post-create setupu
-- ✅ Vyžaduje autentizaci při prvním použití
+- ✅ Nainstalován jako npm balíček `@github/copilot`
+- ✅ Příkaz `copilot` je dostupný globálně
+- ✅ Vyžaduje autentizaci při prvním použití (přes `gh auth login --web`)
+
+**Git LFS:**
+- ✅ Automaticky nainstalován
+- ✅ Inicializován (`git lfs install`)
 
 ## 🚀 Jak to použít
 
@@ -101,21 +105,22 @@ gh version 2.75.0 (2025-07-09)
 
 3. **První autentizace Copilot CLI:**
    ```bash
-   gh auth login
-   # nebo
-   gh auth refresh -s copilot
+   # Přihlášení přes web (pokud ještě nejste)
+   gh auth login --web
+   
+   # Test Copilot CLI
+   copilot suggest "jak commitnout změny?"
    ```
 
 4. **Použití Copilot CLI:**
    ```bash
-   gh copilot suggest "jak commitnout změny?"
-   # nebo pomocí aliasu
+   copilot suggest "jak commitnout změny?"
    copilot explain "npm run dev"
    ```
 
 5. **Spuštění dev serveru:**
    ```bash
-   npm run dev
+   pnpm exec nx serve datamind-pwa
    ```
    Server běží na portu 5173 (automaticky forwardován)
 
@@ -124,9 +129,12 @@ gh version 2.75.0 (2025-07-09)
 ### Testováno v aktuálním Codespace:
 
 - ✅ Node.js 22 LTS je aktivní
-- ✅ npm install proběhl úspěšně
-- ✅ Vite dev server lze spustit
+- ✅ pnpm install proběhl úspěšně
+- ✅ Nx monorepo je nakonfigurováno
+- ✅ Vite dev server lze spustit (PWA)
 - ✅ GitHub CLI je dostupný
+- ✅ Copilot CLI nainstalován jako npm balíček
+- ✅ Git LFS je funkční
 - ✅ Post-create script má správná oprávnění
 
 ### Co otestovat po rebuild Codespace:
@@ -136,28 +144,36 @@ gh version 2.75.0 (2025-07-09)
 gh --version
 
 # 2. Copilot CLI
-gh extension list | grep copilot
-copilot --help  # nebo gh copilot --help
+copilot --version
 
-# 3. Node.js & npm
+# 3. Git LFS
+git lfs version
+
+# 4. Node.js & pnpm
 node --version
-npm --version
+pnpm --version
 
-# 4. Dependencies
-npm install  # mělo by být už hotovo
+# 5. Dependencies
+pnpm install  # mělo by být už hotovo
 
-# 5. Dev server
-npm run dev  # port 5173
+# 6. Dev server
+pnpm exec nx serve datamind-pwa  # port 5173
 ```
 
-## 📝 Dostupné npm příkazy
+## 📝 Dostupné příkazy
 
 ```bash
-npm run dev       # Vite dev server (HMR)
-npm run build     # Produkční build
-npm run preview   # Preview produkčního buildu
-npm run check     # TypeScript/Svelte type checking
-npm run format    # Prettier formátování
+# Nx monorepo
+pnpm exec nx serve datamind-pwa    # Dev server (HMR)
+pnpm exec nx build datamind-pwa    # Produkční build
+pnpm exec nx preview datamind-pwa  # Preview buildu
+pnpm exec nx check datamind-pwa    # Type checking
+
+# Build všech projektů
+pnpm exec nx run-many -t build --all
+
+# Formátování
+pnpm run format
 ```
 
 ## 🐛 Troubleshooting
@@ -166,21 +182,29 @@ npm run format    # Prettier formátování
 
 ```bash
 # Reinstalace
-gh extension remove gh-copilot
-gh extension install github/gh-copilot
+npm uninstall -g @github/copilot
+npm install -g @github/copilot
 
 # Kontrola auth
 gh auth status
-gh auth refresh -s copilot
+gh auth login --web
 ```
 
-### npm install selhává
+### Git LFS chybí
+
+```bash
+# Manuální instalace
+sudo apt-get update && sudo apt-get install -y git-lfs
+git lfs install
+```
+
+### pnpm install selhává
 
 ```bash
 # Vyčištění a reinstalace
-rm -rf node_modules package-lock.json
-npm cache clean --force
-npm install
+pnpm store prune
+rm -rf node_modules pnpm-lock.yaml
+pnpm install
 ```
 
 ### Post-create script se nespustil
@@ -193,11 +217,13 @@ bash .devcontainer/post-create.sh
 ## 📚 Další informace
 
 - [Dev Container README](.devcontainer/README.md)
+- [Monorepo dokumentace](../MONOREPO.md)
 - [Projekt README](../README.md)
-- [GitHub Copilot CLI Docs](https://githubnext.com/projects/copilot-cli)
+- [GitHub Copilot CLI](https://github.com/github/copilot-cli)
 
 ---
 
 **Datum vytvoření:** 27. října 2025  
+**Poslední aktualizace:** 28. října 2025  
 **Vytvořeno pomocí:** GitHub Copilot  
 **Status:** ✅ Připraveno k použití

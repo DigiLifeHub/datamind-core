@@ -10,8 +10,9 @@ Tato složka obsahuje konfiguraci pro GitHub Codespaces a VS Code Dev Containers
 
 ### 🛠️ Nástroje
 Automaticky instalované a dostupné v terminálu:
-- **GitHub CLI** (`gh`) - verze 2.75.0+
-- **GitHub Copilot CLI** (`gh copilot` nebo alias `copilot`)
+- **GitHub CLI** (`gh`) - verze 2.82.0+
+- **GitHub Copilot CLI** (`copilot`) - npm package @github/copilot
+- **Git LFS** - správa velkých souborů
 
 ### 📦 VS Code Extensions
 Automaticky nainstalované:
@@ -23,10 +24,10 @@ Automaticky nainstalované:
 
 ### ⚙️ Post-Create Setup
 Skript `post-create.sh` automaticky:
-1. Ověří dostupnost GitHub CLI
-2. Nainstaluje GitHub Copilot CLI extension
-3. Vytvoří alias `copilot` pro snadnější použití
-4. Spustí `npm install` pokud existuje `package.json`
+1. Nainstaluje Git LFS (pokud není přítomen)
+2. Ověří dostupnost GitHub CLI
+3. Nainstaluje GitHub Copilot CLI jako npm balíček (`@github/copilot`)
+4. Spustí `pnpm install` pokud existuje `package.json` nebo workspace
 
 ### 🔌 Porty
 Automaticky forwardované:
@@ -47,11 +48,8 @@ gh auth status
 gh repo view
 
 # GitHub Copilot CLI
-gh copilot --help
-copilot --help  # alias
-
-# Copilot suggestions
-gh copilot suggest "jak udělat commit všech změn?"
+copilot --help
+copilot suggest "jak udělat commit všech změn?"
 copilot explain "npm install"
 
 # Node.js & npm
@@ -68,12 +66,14 @@ yarn install
 
 ### Autentizace GitHub Copilot
 
-Při prvním použití Copilot CLI může být potřeba autentizace:
+Při prvním použití Copilot CLI bude potřeba autentizace přes web:
 
 ```bash
-gh auth login
-# nebo
-gh auth refresh -s copilot
+# Přihlášení přes GitHub (pokud ještě nejste)
+gh auth login --web
+
+# Copilot CLI použije vaše GitHub credentials automaticky
+copilot suggest "test"
 ```
 
 ## Struktura souborů
@@ -96,20 +96,33 @@ Pokud máte VS Code s Dev Containers extension:
 
 ### Copilot CLI nefunguje
 ```bash
-# Reinstalace extension
-gh extension remove gh-copilot
-gh extension install github/gh-copilot
+# Reinstalace
+npm uninstall -g @github/copilot
+npm install -g @github/copilot
 
 # Kontrola autentizace
 gh auth status
+gh auth login --web
+```
+
+### Git LFS chybí
+```bash
+# Manuální instalace
+sudo apt-get update && sudo apt-get install -y git-lfs
+git lfs install
 ```
 
 ### npm install selhává
 ```bash
-# Vyčištění cache
+# Vyčištění cache (pro npm)
 npm cache clean --force
 rm -rf node_modules package-lock.json
 npm install
+
+# Pro pnpm workspace
+pnpm store prune
+rm -rf node_modules pnpm-lock.yaml
+pnpm install
 ```
 
 ## Další informace
@@ -117,4 +130,5 @@ npm install
 - [VS Code Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers)
 - [GitHub Codespaces](https://docs.github.com/en/codespaces)
 - [GitHub CLI](https://cli.github.com/)
-- [GitHub Copilot CLI](https://githubnext.com/projects/copilot-cli)
+- [GitHub Copilot CLI](https://github.com/github/copilot-cli)
+- [Git LFS](https://git-lfs.github.com/)
